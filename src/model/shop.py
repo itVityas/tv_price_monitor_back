@@ -11,3 +11,6 @@ class Shop(BaseModelOnlyId):
     __tablename__ = "shop"
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     url: Mapped[str] = mapped_column(String(150), nullable=False)
+
+    def __str__(self):
+        return f'<shop>: {self.id} {self.name}'

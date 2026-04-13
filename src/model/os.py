@@ -9,3 +9,6 @@ class OS(BaseModelOnlyId):
     """
     __tablename__ = "os"
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+
+    def __str__(self):
+        return f'<os>: {self.id} {self.name}'

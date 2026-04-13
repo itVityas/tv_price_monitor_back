@@ -10,3 +10,6 @@ class Category(BaseModelOnlyId):
     __tablename__ = "category"
 
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+
+    def __str__(self):
+        return f'<category>: {self.id} {self.name}'

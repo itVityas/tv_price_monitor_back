@@ -11,3 +11,6 @@ class ScreenResolution(BaseModelOnlyId):
     name: Mapped[str] = mapped_column(String(10), nullable=False, unique=True)
     width: Mapped[int]
     height: Mapped[int]
+
+    def __str__(self):
+        return f'<name>: {self.id} {self.name}'

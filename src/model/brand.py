@@ -10,3 +10,6 @@ class Brand(BaseModelOnlyId):
     __tablename__ = "brand"
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     country: Mapped[str] = mapped_column(String(50), nullable=True)
+
+    def __str__(self):
+        return f'<brand>: {self.id} {self.name}'

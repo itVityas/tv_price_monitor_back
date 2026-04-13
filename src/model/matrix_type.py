@@ -9,3 +9,6 @@ class MatrixType(BaseModelOnlyId):
     """
     __tablename__ = "matrix_type"
     name: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
+
+    def __str__(self):
+        return f'<matrix>: {self.id} {self.name}'
