@@ -5,6 +5,8 @@ from .base import BaseModel
 
 
 class User(BaseModel):
+    """Модель пользователя: id, username, password, is_active, created_at, updated_at
+    """
     __tablename__ = "users"
 
     username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)

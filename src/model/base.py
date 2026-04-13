@@ -14,12 +14,16 @@ class TimestampMixin:
 
 
 class BaseModel(Base, TimestampMixin):
+    """Base model: id, created_at, updated_at
+    """
     __abstract__ = True
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
 
 class BaseModelOnlyId(Base):
+    """Base model: id
+    """
     __abstract__ = True
 
     id: Mapped[int] = mapped_column(primary_key=True)

@@ -5,4 +5,7 @@ from .base import BaseModelOnlyId
 
 
 class OS(BaseModelOnlyId):
+    """Модель для предоставления операционной системы телевизора: id, name
+    """
+    __tablename__ = "os"
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)

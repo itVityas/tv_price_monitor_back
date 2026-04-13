@@ -5,5 +5,9 @@ from .base import BaseModelOnlyId
 
 
 class Shop(BaseModelOnlyId):
+    """Модель для предоставления названия онлайн магазина: id, name, url
+    url - ссылка по которой будет производиться поиск
+    """
+    __tablename__ = "shop"
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     url: Mapped[str] = mapped_column(String(150), nullable=False)
