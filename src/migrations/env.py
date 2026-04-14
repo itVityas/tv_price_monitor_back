@@ -9,6 +9,13 @@ from alembic import context
 from src.settings.config import database_config
 from src.model.base import Base
 from src.model.user import User
+from src.model.brand import Brand
+from src.model.category import Category
+from src.model.matrix_type import MatrixType
+from src.model.os import OS
+from src.model.tv import TV
+from src.model.screen_resolution import ScreenResolution
+from src.model.shop import Shop
 
 
 # this is the Alembic Config object, which provides

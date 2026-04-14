@@ -18,7 +18,7 @@ class BaseModel(Base, TimestampMixin):
     """
     __abstract__ = True
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
 
 
 class BaseModelOnlyId(Base):
@@ -26,4 +26,4 @@ class BaseModelOnlyId(Base):
     """
     __abstract__ = True
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
