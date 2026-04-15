@@ -13,9 +13,10 @@ from src.model.brand import Brand
 from src.model.category import Category
 from src.model.matrix_type import MatrixType
 from src.model.os import OS
-from src.model.tv import TV
 from src.model.screen_resolution import ScreenResolution
 from src.model.shop import Shop
+from src.model.tv import TV
+from src.model.shop_link import ShopLink
 
 
 # this is the Alembic Config object, which provides
