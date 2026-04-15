@@ -17,6 +17,8 @@ from src.model.screen_resolution import ScreenResolution
 from src.model.shop import Shop
 from src.model.tv import TV
 from src.model.shop_link import ShopLink
+from src.model.currency import Currency
+from src.model.day_price import DayPrice
 
 
 # this is the Alembic Config object, which provides
