@@ -1,0 +1,26 @@
+from datetime import date as datetype
+from decimal import Decimal
+
+from sqlalchemy import func, ForeignKey, Numeric, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from .base import BaseModelOnlyId
+
+
+class ExchangeRate(BaseModelOnlyId):
+    """Модель для курса валют: id, currency_id, rate, date, base_currensy_id
+    currency_id: валюта
+    base_currency_id: базовая валюта к которой приводится курс
+    """
+    __tablename__ = 'exchange_rate'
+
+    date: Mapped[datetype] = mapped_column(insert_default=func.current_date(), nullable=False, index=True)
+    currency_id: Mapped[int] = mapped_column(ForeignKey('currency.id'), nullable=False)
+    currency = relationship("Currency")
+    base_currency_id: Mapped[int] = mapped_column(ForeignKey('currency.id'), nullable=False)
+    base_currency = relationship("Currency")
+    rate: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("date", "currency_id", 'base_currency_id', name="uq_date_currency"),
+    )
