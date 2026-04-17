@@ -11,7 +11,7 @@ ModelType = TypeVar("ModelType")
 
 
 class BaseData:
-    def __init__(self, model: Type[ModelType], session: AsyncSession):
+    async def __init__(self, model: Type[ModelType], session: AsyncSession):
         self.model = model
         self.session = session
 

@@ -50,7 +50,7 @@ class ProjectConfig:
     def __init__(self):
         self.project_name = os.getenv('PROJECT_NAME', 'FastAPI')
         self.project_version = os.getenv('PROJECT_VERSION', '0.0.1')
-        self.debug = os.getenv('DEBUG', False)
+        self.debug = True if 'True' == os.getenv('DEBUG', False) else False
 
 
 project_config = ProjectConfig()
