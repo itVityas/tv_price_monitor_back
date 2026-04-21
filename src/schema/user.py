@@ -7,6 +7,7 @@ class UserBaseSchema(BaseModel):
     username: str
     password: str
     is_active: bool
+    is_admin: bool
 
     class Config:
         from_attributes = True
