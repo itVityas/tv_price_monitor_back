@@ -33,6 +33,14 @@ class UserChangePasswordSchema(BaseModel):
         from_attributes = True
 
 
+class UserChangeActionSchema(BaseModel):
+    id: int
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
+
 class UserLoginSchema(BaseModel):
     username: str
     password: str

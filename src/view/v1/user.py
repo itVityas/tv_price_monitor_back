@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from schema.user import UserGetSchema, UserCreateSchema, UserChangePasswordSchema
+from schema.user import UserGetSchema, UserCreateSchema, UserChangePasswordSchema, UserChangeActionSchema
 from repository.user import UserData
 from model.user import User
 from settings.database import get_session
@@ -19,7 +19,7 @@ async def get_users(session=Depends(get_session)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.post('/', response_model=UserGetSchema | None)
+@router.post('/', response_model=UserGetSchema)
 async def create_user(user: UserCreateSchema, session=Depends(get_session)):
     try:
         user_model = UserData(User, session)
@@ -29,11 +29,22 @@ async def create_user(user: UserCreateSchema, session=Depends(get_session)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.put('/change_password/', tags=["Users"])
+@router.put('/change_password/', tags=["Users"], response_model=UserGetSchema)
 async def change_password_user(user: UserChangePasswordSchema, session=Depends(get_session)):
     try:
-        user_model = UserData(User, session)
-        await user_model.change_password(user)
-        return {'status': 'success'}
+        user_data = UserData(User, session)
+        model = await user_data.change_password(
+            id=user.id, password=user.password_new, old_password=user.old_password)
+        return UserGetSchema.model_validate(model)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.put('/change_active/', tags=['Users'], response_model=UserGetSchema)
+async def change_active_user(user: UserChangeActionSchema, session=Depends(get_session)):
+    try:
+        user_data = UserData(User, session)
+        model = await user_data.change_state(id=user.id, is_active=user.is_active)
+        return UserGetSchema.model_validate(model)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
