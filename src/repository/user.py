@@ -43,6 +43,8 @@ class UserData(BaseData):
             raise ValueError("Пользователь не найден")
         if not self._verify_password(old_password, user.password):
             raise ValueError("Неверный пароль")
+        if self._verify_password(new_password, user.password):
+            raise ValueError("Новый пароль должен отличаться от старого")
         user.password = self._hash_password(new_password)
         self.session.add(user)
         await self.session.commit()

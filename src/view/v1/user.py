@@ -29,7 +29,7 @@ async def create_user(user: UserCreateSchema, session=Depends(get_session)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.put('/change_password/', tags=["Users"], response_model=UserGetSchema)
+@router.put('/change_password/', response_model=UserGetSchema)
 async def change_password_user(user: UserChangePasswordSchema, session=Depends(get_session)):
     try:
         user_data = UserData(User, session)
@@ -40,7 +40,7 @@ async def change_password_user(user: UserChangePasswordSchema, session=Depends(g
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.put('/change_active/', tags=['Users'], response_model=UserGetSchema)
+@router.put('/change_active/', response_model=UserGetSchema)
 async def change_active_user(user: UserChangeActionSchema, session=Depends(get_session)):
     try:
         user_data = UserData(User, session)
