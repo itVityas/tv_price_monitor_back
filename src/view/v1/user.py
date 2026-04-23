@@ -34,7 +34,7 @@ async def change_password_user(user: UserChangePasswordSchema, session=Depends(g
     try:
         user_data = UserData(User, session)
         model = await user_data.change_password(
-            id=user.id, password=user.password_new, old_password=user.old_password)
+            id=user.id, password=user.new_password, old_password=user.old_password)
         return UserGetSchema.model_validate(model)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
