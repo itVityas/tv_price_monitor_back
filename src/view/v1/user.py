@@ -19,7 +19,7 @@ async def get_users(session=Depends(get_session)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.post('/', response_model=UserGetSchema)
+@router.post('/', response_model=UserGetSchema, status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserCreateSchema, session=Depends(get_session)):
     try:
         user_model = UserData(User, session)
