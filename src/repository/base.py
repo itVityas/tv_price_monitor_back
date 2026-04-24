@@ -41,7 +41,19 @@ class BaseData:
                             skip: int = 0,
                             limit: int = 100,
                             filters: Optional[Dict[str, Any]] = None,
+                            sort: Optional[str] = None,
+                            sort_order: str = "asc"
                         ) -> List[ModelType]:
+        """Return model and total count
+
+        Args:
+            skip (int, optional): Defaults to 0.
+            limit (int, optional): Defaults to 100.
+            filters (Optional[Dict[str, Any]], optional): Defaults to None.
+
+        Returns:
+            List[ModelType], int : return list of models and total count
+        """
         query = select(self.model).offset(skip).limit(limit)
         if filters:
             for filter in filters:
