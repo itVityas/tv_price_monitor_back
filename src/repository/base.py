@@ -1,7 +1,7 @@
 from typing import TypeVar, Type, Optional, List, Dict, Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 # from pydantic import BaseModel
 
 
@@ -41,7 +41,7 @@ class BaseData:
                             skip: int = 0,
                             limit: int = 100,
                             filters: Optional[Dict[str, Any]] = None,
-                            sort: Optional[str] = None,
+                            sort_fild: Optional[str] = None,
                             sort_order: str = "asc"
                         ) -> List[ModelType]:
         """Return model and total count
@@ -60,5 +60,17 @@ class BaseData:
                 if hasattr(self.model, filter):
                     query = query.where(
                         getattr(self.model, filter) == filters[filter])
+        if sort_fild and hasattr(self.model, sort_fild):
+            if sort_order.lower() == "desc":
+                query = query.order_by(getattr(self.model, sort_fild).desc())
+            else:
+                query = query.order_by(getattr(self.model, sort_fild).asc())
+        else:
+            query = query.order_by(self.model.id.asc())
         result = await self.session.execute(query)
-        return result.scalars().all()
+
+        total_query = select(func.count(self.model.id))
+        total_result = await self.session.execute(total_query)
+        total = total_result.scalar_one()
+
+        return result.scalars().all(), total
