@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from schema.user import UserGetSchema, UserCreateSchema, UserChangePasswordSchema, UserChangeActionSchema
-from schema.pagination import PaginationSortParamsSchema
+from schema.user import UserGetSchema, UserCreateSchema, UserChangePasswordSchema, UserChangeActionSchema, UserPaginationParamsSchema
 from repository.user import UserData
 from model.user import User
 from settings.database import get_session
@@ -12,7 +11,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.get('/', response_model=list[UserGetSchema])
 async def get_users(
-        pagination: PaginationSortParamsSchema = Depends(),
+        pagination: UserPaginationParamsSchema = Depends(),
         session=Depends(get_session)):
     try:
         user_model = UserData(User, session)
@@ -20,7 +19,8 @@ async def get_users(
             skip=pagination.offset,
             limit=pagination.limit,
             sort_fild=pagination.sort_field,
-            sort_order=pagination.sort_order)
+            sort_order=pagination.sort_order,
+            filters=pagination.filters)
         return [UserGetSchema.model_validate(user) for user in users]
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

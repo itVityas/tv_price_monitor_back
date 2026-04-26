@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from .pagination import PaginationSortParamsSchema
+
 
 class UserGetSchema(BaseModel):
     id: int
@@ -13,6 +15,20 @@ class UserGetSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+user_filters = {
+    'id': None,
+    'username': None,
+    'start_username': None,
+    'end_username': None,
+    'is_active': None,
+    'is_admin': None
+}
+
+
+class UserPaginationParamsSchema(PaginationSortParamsSchema):
+    filters: dict = user_filters
 
 
 class UserCreateSchema(BaseModel):

@@ -57,6 +57,14 @@ class BaseData:
         query = select(self.model).offset(skip).limit(limit)
         if filters:
             for filter in filters:
+                if str(filter).startswith('start'):
+                    filter_name = filter[:6]
+                    if hasattr(self.model, filter_name):
+                        query = query.filter(getattr(self.model, filter_name).istartswith(filters[filter]))
+                if str(filter).startswith('end'):
+                    filter_name = filter[:6]
+                    if hasattr(self.model, filter_name):
+                        query = query.filter(getattr(self.model, filter_name).iendwith(filters[filter]))
                 if hasattr(self.model, filter):
                     query = query.where(
                         getattr(self.model, filter) == filters[filter])

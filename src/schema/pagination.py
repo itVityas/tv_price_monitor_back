@@ -1,4 +1,4 @@
-from typing import List, TypeVar, Generic
+from typing import List, TypeVar, Generic, Optional
 
 from pydantic import BaseModel, Field
 
@@ -9,6 +9,7 @@ T = TypeVar('T')
 class PaginationParamsSchema(BaseModel):
     page: int = Field(default=1, ge=1, description='Номер страницы, начинается с 1')
     page_size: int = Field(default=20, ge=1, le=100, description='Размер страницы, с 1 до 100')
+    filters: Optional[dict] = Field(default=None, description='Фильтры')
 
     @property
     def offset(self) -> int:
@@ -24,6 +25,7 @@ class PaginationSortParamsSchema(BaseModel):
     page_size: int = Field(default=20, ge=1, le=100, description='Размер страницы, с 1 до 100')
     sort_field: str = Field(default='id', description='Поле для сортировки')
     sort_order: str = Field(default='asc', description='Порядок сортировки: asc или desc')
+    filters: Optional[dict] = Field(default=None, description='Фильтры')
 
     @property
     def offset(self) -> int:
