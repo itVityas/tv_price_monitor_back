@@ -7,6 +7,7 @@ from schema.user import (
     UserChangeActionSchema,
     UserPaginationParamsSchema
 )
+from schema.pagination import PaginationResponseSchema
 from repository.user import UserData
 from model.user import User
 from settings.database import get_session
@@ -15,7 +16,7 @@ from settings.database import get_session
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.get('/', response_model=list[UserGetSchema])
+@router.get('/', response_model=PaginationResponseSchema[UserGetSchema])
 async def get_users(
         pagination: UserPaginationParamsSchema = Depends(),
         session=Depends(get_session)):
@@ -43,13 +44,19 @@ async def get_users(
     """
     try:
         user_model = UserData(User, session)
-        users = await user_model.get_multi(
+        users, total = await user_model.get_multi(
             skip=pagination.offset,
             limit=pagination.limit,
-            sort_fild=pagination.sort_field,
+            sort_field=pagination.sort_field,
             sort_order=pagination.sort_order,
             filters=pagination.filters)
-        return [UserGetSchema.model_validate(user) for user in users]
+        users_schema = [UserGetSchema.model_validate(user) for user in users]
+        return PaginationResponseSchema[UserGetSchema](
+            items=users_schema,
+            total=total,
+            page=pagination.page,
+            size=pagination.page_size,
+        )
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 

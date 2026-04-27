@@ -36,12 +36,49 @@ class BaseData:
         await self.session.refresh(db_obj)
         return db_obj
 
+    def _apply_filters(self, query, filters: Optional[Dict[str, any]]) -> Any:
+        print(filters)
+        if not filters:
+            return query
+        for field, value in filters.items():
+            if '__' in field:
+                field, operator = field.split('__')
+                if not hasattr(self.model, field):
+                    continue
+                if operator == 'eq':
+                    query = query.where(getattr(self.model, field) == value)
+                elif operator == 'ne':
+                    query = query.where(getattr(self.model, field) != value)
+                # elif operator == 'gt':
+                #     query = query.where(getattr(self.model, field) > value)
+                # elif operator == 'lt':
+                #     query = query.where(getattr(self.model, field) < value)
+                # elif operator == 'gte':
+                #     query = query.where(getattr(self.model, field) >= value)
+                # elif operator == 'lte':
+                #     query = query.where(getattr(self.model, field) <= value)
+                elif operator == 'icontains':
+                    query = query.where(getattr(self.model, field).ilike(f'%{value}%'))
+                elif operator == 'istartswith':
+                    query = query.where(getattr(self.model, field).ilike(f'{value}%'))
+                elif operator == 'iendswith':
+                    query = query.where(getattr(self.model, field).ilike(f'%{value}'))
+                elif operator == 'is_null':
+                    query = query.where(getattr(self.model, field).is_(None))
+                elif operator == 'is_not_null':
+                    query = query.where(getattr(self.model, field)._is_not(None))
+            else:
+                if not hasattr(self.model, field):
+                    continue
+                query = query.where(getattr(self.model, field) == value)
+        return query
+
     async def get_multi(
                             self,
                             skip: int = 0,
                             limit: int = 100,
                             filters: Optional[Dict[str, Any]] = None,
-                            sort_fild: Optional[str] = None,
+                            sort_field: Optional[str] = None,
                             sort_order: str = "asc"
                         ) -> List[ModelType]:
         """Return model and total count
@@ -55,24 +92,12 @@ class BaseData:
             List[ModelType], int : return list of models and total count
         """
         query = select(self.model).offset(skip).limit(limit)
-        if filters:
-            for filter in filters:
-                if str(filter).startswith('start'):
-                    filter_name = filter[:6]
-                    if hasattr(self.model, filter_name):
-                        query = query.filter(getattr(self.model, filter_name).istartswith(filters[filter]))
-                if str(filter).startswith('end'):
-                    filter_name = filter[:6]
-                    if hasattr(self.model, filter_name):
-                        query = query.filter(getattr(self.model, filter_name).iendwith(filters[filter]))
-                if hasattr(self.model, filter):
-                    query = query.where(
-                        getattr(self.model, filter) == filters[filter])
-        if sort_fild and hasattr(self.model, sort_fild):
+        query = self._apply_filters(query, filters)
+        if sort_field and hasattr(self.model, sort_field):
             if sort_order.lower() == "desc":
-                query = query.order_by(getattr(self.model, sort_fild).desc())
+                query = query.order_by(getattr(self.model, sort_field).desc())
             else:
-                query = query.order_by(getattr(self.model, sort_fild).asc())
+                query = query.order_by(getattr(self.model, sort_field).asc())
         else:
             query = query.order_by(self.model.id.asc())
         result = await self.session.execute(query)
