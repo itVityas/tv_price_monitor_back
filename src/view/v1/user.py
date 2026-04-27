@@ -1,6 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from schema.user import UserGetSchema, UserCreateSchema, UserChangePasswordSchema, UserChangeActionSchema, UserPaginationParamsSchema
+from schema.user import (
+    UserGetSchema,
+    UserCreateSchema,
+    UserChangePasswordSchema,
+    UserChangeActionSchema,
+    UserPaginationParamsSchema
+)
 from repository.user import UserData
 from model.user import User
 from settings.database import get_session
@@ -13,6 +19,28 @@ router = APIRouter(prefix="/users", tags=["Users"])
 async def get_users(
         pagination: UserPaginationParamsSchema = Depends(),
         session=Depends(get_session)):
+    """
+    Получить список пользователей с пагинацией, сортировкой и фильтрацией
+
+    Параметры пагинации:
+    - Страница: ?page=0
+    - Количество записей на странице: ?page_size=20
+
+    Параметры сортировки:
+    - Сортировка по ID: ?sort_field=id
+    - Сортировка по username: ?sort_field=username
+    - Сортировка по дате создания: ?sort_field=created_at
+    - Сортировка по дате обновления: ?sort_field=updated_at
+    - Обратная сортировка: ?sort_field=-id
+
+    Примеры фильтров:
+    - Фильтр по username: ?filters[username]=john
+    - Фильтр по части username: ?filters[username__icontains]=jo
+    - Фильтр по ID: ?filters[id]=1
+    - Фильтр по диапазону ID: ?filters[id__gt]=10&filters[id__lt]=50
+    - Фильтр по дате: ?filters[created_at__gte]=2024-01-01T00:00:00
+    - Несколько фильтров: ?filters[is_active]=true&filters[is_admin]=false
+    """
     try:
         user_model = UserData(User, session)
         users = await user_model.get_multi(

@@ -1,6 +1,6 @@
 from typing import List, TypeVar, Generic, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 T = TypeVar('T')
@@ -34,6 +34,12 @@ class PaginationSortParamsSchema(BaseModel):
     @property
     def limit(self) -> int:
         return self.page_size
+
+    @field_validator('sort_order')
+    def validate_sort_order(cls, v):
+        if v.lower() not in ['asc', 'desc']:
+            raise ValueError("sort_order must be 'asc' or 'desc'")
+        return v.lower()
 
 
 class PaginationResponseSchema(BaseModel, Generic[T]):
