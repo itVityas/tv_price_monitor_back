@@ -51,11 +51,13 @@ async def get_users(
             sort_order=pagination.sort_order,
             filters=pagination.filters)
         users_schema = [UserGetSchema.model_validate(user) for user in users]
+        pages = total // pagination.page_size + (1 if total % pagination.page_size else 0)
         return PaginationResponseSchema[UserGetSchema](
             items=users_schema,
             total=total,
             page=pagination.page,
             size=pagination.page_size,
+            pages=pages
         )
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

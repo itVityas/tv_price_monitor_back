@@ -37,13 +37,12 @@ class BaseData:
         return db_obj
 
     def _apply_filters(self, query, filters: Optional[Dict[str, any]]) -> Any:
-        print(filters)
         if not filters:
             return query
         for field, value in filters.items():
             if '__' in field:
                 field, operator = field.split('__')
-                if not hasattr(self.model, field):
+                if not hasattr(self.model, field) or value is None:
                     continue
                 if operator == 'eq':
                     query = query.where(getattr(self.model, field) == value)
@@ -68,7 +67,7 @@ class BaseData:
                 elif operator == 'is_not_null':
                     query = query.where(getattr(self.model, field)._is_not(None))
             else:
-                if not hasattr(self.model, field):
+                if not hasattr(self.model, field) or value is None:
                     continue
                 query = query.where(getattr(self.model, field) == value)
         return query
@@ -91,8 +90,14 @@ class BaseData:
         Returns:
             List[ModelType], int : return list of models and total count
         """
-        query = select(self.model).offset(skip).limit(limit)
+        query = select(self.model)
         query = self._apply_filters(query, filters)
+
+        # total_query = query.count()
+        # total_result = await self.session.execute(total_query)
+        # total = total_result.scalar_one()
+        total = 0
+
         if sort_field and hasattr(self.model, sort_field):
             if sort_order.lower() == "desc":
                 query = query.order_by(getattr(self.model, sort_field).desc())
@@ -100,10 +105,8 @@ class BaseData:
                 query = query.order_by(getattr(self.model, sort_field).asc())
         else:
             query = query.order_by(self.model.id.asc())
-        result = await self.session.execute(query)
 
-        total_query = select(func.count(self.model.id))
-        total_result = await self.session.execute(total_query)
-        total = total_result.scalar_one()
+        query = query.offset(skip).limit(limit)
+        result = await self.session.execute(query)
 
         return result.scalars().all(), total
