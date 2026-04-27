@@ -93,10 +93,10 @@ class BaseData:
         query = select(self.model)
         query = self._apply_filters(query, filters)
 
-        # total_query = query.count()
-        # total_result = await self.session.execute(total_query)
-        # total = total_result.scalar_one()
-        total = 0
+        count_query = select(func.count()).select_from(self.model)
+        count_query = self._apply_filters(count_query, filters)
+        count_result = await self.session.execute(count_query)
+        total = count_result.scalar_one()
 
         if sort_field and hasattr(self.model, sort_field):
             if sort_order.lower() == "desc":
