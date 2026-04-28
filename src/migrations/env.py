@@ -20,6 +20,7 @@ from src.model.shop_link import ShopLink
 from src.model.currency import Currency
 from src.model.day_price import DayPrice
 from src.model.exchange_rate import ExchangeRate
+from src.model.refresh_token import RefreshToken
 
 
 # this is the Alembic Config object, which provides

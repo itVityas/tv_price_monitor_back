@@ -54,3 +54,17 @@ class ProjectConfig:
 
 
 project_config = ProjectConfig()
+
+
+class JWTConfig:
+    """
+    """
+    def __init__(self):
+        self.secret_key = os.getenv("SECRET_KEY")
+        self.refresh_key = os.getenv("REFRESH_SECRET_KEY")
+        self.algorithm: str = "HS256"
+        self.expire_access_token: int = 15
+        self.expire_refresh_token: int = 60 * 24 * 7
+
+
+jwt_config = JWTConfig()
