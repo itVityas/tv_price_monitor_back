@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status, Request
+from sqlalchemy import select
 
 from schema.user import (
     UserGetSchema,
@@ -11,7 +12,7 @@ from schema.user import (
     UserLoginSchema,
 )
 from schema.pagination import PaginationResponseSchema
-from schema.auth import TokenSchema
+from schema.auth import TokenSchema, RefreshTokenSchema
 from repository.user import UserData
 from model.user import User
 from model.refresh_token import RefreshToken
@@ -122,5 +123,25 @@ async def login_user(login_schema: UserLoginSchema, request: Request, session=De
         session.commit()
 
         return TokenSchema(access_token=access_token, refresh_token=refresh_token)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.post('/refresh/', response_model=TokenSchema)
+async def refresh_token(token:RefreshTokenSchema, request: Request, session=Depends(get_session)):
+    try:
+        result = await session.execute(select(RefreshToken).where(RefreshToken.token == token.refresh_token))
+        db_refresh_token = result.scalar_one_or_none()
+        if not db_refresh_token or db_refresh_token.revoked or db_refresh_token.expires_at < datetime.now(tz=timezone):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid refresh token")
+        payload = decode_refresh_token(db_refresh_token.token)
+        if not payload or payload.get("type") != "refresh":
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid refresh token payload")
+        user = await UserData(User, session).get_by_id(payload.get("user_id"))
+        if not user:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
+        access_token = create_access_token(user)
+        return TokenSchema(access_token=access_token, refresh_token=refresh_token)
+        
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
