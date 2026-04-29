@@ -44,7 +44,7 @@ def create_refresh_token(user: User) -> str:
     return encoded_jwt
 
 
-def decode_access_token(token: str) -> str:
+def decode_access_token(token: str) -> dict:
     try:
         payload = jwt.decode(token, jwt_config.secret_key, algorithms=[jwt_config.algorithm])
         return payload
@@ -52,7 +52,7 @@ def decode_access_token(token: str) -> str:
         raise ValueError("Invalid access token")
 
 
-def decode_refresh_token(token: str) -> str:
+def decode_refresh_token(token: str) -> dict:
     try:
         payload = jwt.decode(token, jwt_config.refresh_key, algorithms=[jwt_config.algorithm])
         return payload
