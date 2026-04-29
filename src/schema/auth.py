@@ -3,17 +3,17 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class Token(BaseModel):
+class TokenSchema(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = 'bearer'
 
 
-class TokenPayload(BaseModel):
+class TokenPayloadSchema(BaseModel):
     sub: str
     exp: datetime
     type: str
 
 
-class RefreshToken(BaseModel):
+class RefreshTokenSchema(BaseModel):
     refresh_token: str

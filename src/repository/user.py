@@ -4,13 +4,9 @@ from sqlalchemy import select
 from model.user import User
 from schema.user import UserCreateSchema
 from repository.base import BaseData
-from .auth import get_current_user
 from service.security import (
-    create_access_token,
-    create_refresh_token,
     hash_password,
-    verify_password,
-    decode_access_token,)
+    verify_password,)
 
 
 class UserData(BaseData):
@@ -67,5 +63,7 @@ class UserData(BaseData):
         if not user:
             return None
         if not verify_password(password, user.password):
+            return None
+        if user.is_active is False:
             return None
         return user

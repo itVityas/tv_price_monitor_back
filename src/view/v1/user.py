@@ -1,16 +1,26 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from datetime import datetime
+
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 
 from schema.user import (
     UserGetSchema,
     UserCreateSchema,
     UserChangePasswordSchema,
     UserChangeActionSchema,
-    UserPaginationParamsSchema
+    UserPaginationParamsSchema,
+    UserLoginSchema,
 )
 from schema.pagination import PaginationResponseSchema
+from schema.auth import TokenSchema
 from repository.user import UserData
 from model.user import User
+from model.refresh_token import RefreshToken
 from settings.database import get_session
+from service.security import (
+    create_access_token,
+    create_refresh_token,
+    decode_access_token,
+    decode_refresh_token,)
 
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -90,5 +100,27 @@ async def change_active_user(user: UserChangeActionSchema, session=Depends(get_s
         user_data = UserData(User, session)
         model = await user_data.change_state(id=user.id, is_active=user.is_active)
         return UserGetSchema.model_validate(model)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.post('/login/', response_model=TokenSchema)
+async def login_user(login_schema: UserLoginSchema, request: Request, session=Depends(get_session)):
+    try:
+        user = await UserData(User, session).authenticate(login_schema.username, login_schema.password)
+        if not user:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        access_token = create_access_token(user)
+        refresh_token = create_refresh_token(user)
+        payload = decode_refresh_token(refresh_token)
+        expires_at = datetime.fromtimestamp(payload["exp"]) if payload else None
+
+        client_ip = request.client.host if request.client else None
+        user_agent = request.headers.get("user-agent")
+        db_refresh_token = RefreshToken(user_id=user.id, token=refresh_token, expires_at=expires_at, ip_address=client_ip, user_agent=user_agent)
+        session.add(db_refresh_token)
+        session.commit()
+
+        return TokenSchema(access_token=access_token, refresh_token=refresh_token)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
