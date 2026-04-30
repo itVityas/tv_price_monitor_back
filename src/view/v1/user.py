@@ -1,7 +1,7 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status, Request
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from schema.user import (
     UserGetSchema,
@@ -120,7 +120,7 @@ async def login_user(login_schema: UserLoginSchema, request: Request, session=De
         user_agent = request.headers.get("user-agent")
         db_refresh_token = RefreshToken(user_id=user.id, token=refresh_token, expires_at=expires_at, ip_address=client_ip, user_agent=user_agent)
         session.add(db_refresh_token)
-        session.commit()
+        await session.commit()
 
         return TokenSchema(access_token=access_token, refresh_token=refresh_token)
     except Exception as e:
@@ -132,15 +132,31 @@ async def refresh_token(token:RefreshTokenSchema, request: Request, session=Depe
     try:
         result = await session.execute(select(RefreshToken).where(RefreshToken.token == token.refresh_token))
         db_refresh_token = result.scalar_one_or_none()
-        if not db_refresh_token or db_refresh_token.revoked or db_refresh_token.expires_at < datetime.now(tz=timezone):
+        if not db_refresh_token or db_refresh_token.revoked or db_refresh_token.expires_at < datetime.now(tz=None):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid refresh token")
         payload = decode_refresh_token(db_refresh_token.token)
         if not payload or payload.get("type") != "refresh":
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid refresh token payload")
-        user = await UserData(User, session).get_by_id(payload.get("user_id"))
+        user = await UserData(User, session).get_one(int(payload.get("id")))
         if not user:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
+
+        query = delete(RefreshToken).where(RefreshToken.user_id == user.id)
+        await session.execute(query)
+        query = delete(RefreshToken).where(RefreshToken.revoked == True, RefreshToken.expires_at < datetime.now(tz=None))
+        await session.execute(query)
+
         access_token = create_access_token(user)
+        refresh_token = create_refresh_token(user)
+        payload = decode_refresh_token(refresh_token)
+
+        client_ip = request.client.host if request.client else None
+        expires_at = datetime.fromtimestamp(payload["exp"]) if payload else None
+        user_agent = request.headers.get("user-agent")
+        db_refresh_token = RefreshToken(user_id=user.id, token=refresh_token, expires_at=expires_at, ip_address=client_ip, user_agent=user_agent)
+        session.add(db_refresh_token)
+        await session.commit()
+
         return TokenSchema(access_token=access_token, refresh_token=refresh_token)
         
     except Exception as e:

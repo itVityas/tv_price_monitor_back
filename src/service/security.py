@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime, timezone
+from datetime import timedelta, datetime
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -19,12 +19,12 @@ def verify_password(plain_password: str, hash_password: str) -> bool:
 
 
 def create_access_token(user: User) -> str:
-    exp_date = datetime.now(tz=timezone.utc) + timedelta(minutes=jwt_config.expire_access_token)
+    exp_date = datetime.now(tz=None) + timedelta(minutes=jwt_config.expire_access_token)
     to_encode = {
         'id': user.id,
         'is_admin': user.is_admin,
         'exp': exp_date,
-        'iat': datetime.now(tz=timezone.utc),
+        'iat': datetime.now(tz=None),
         'type': 'access',
     }
     encoded_jwt = jwt.encode(to_encode, jwt_config.secret_key, algorithm=jwt_config.algorithm)
@@ -32,12 +32,12 @@ def create_access_token(user: User) -> str:
 
 
 def create_refresh_token(user: User) -> str:
-    exp_date = datetime.now(tz=timezone.utc) + timedelta(minutes=jwt_config.expire_refresh_token)
+    exp_date = datetime.now(tz=None) + timedelta(minutes=jwt_config.expire_refresh_token)
     to_encode = {
         'id': user.id,
         'is_admin': user.is_admin,
         'exp': exp_date,
-        'iat': datetime.now(tz=timezone.utc),
+        'iat': datetime.now(tz=None),
         'type': 'refresh',
     }
     encoded_jwt = jwt.encode(to_encode, jwt_config.refresh_key, algorithm=jwt_config.algorithm)
