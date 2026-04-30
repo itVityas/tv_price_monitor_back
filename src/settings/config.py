@@ -1,4 +1,5 @@
 import os
+from typing import List 
 
 from dotenv import load_dotenv
 
@@ -49,8 +50,12 @@ class ProjectConfig:
 
     def __init__(self):
         self.project_name = os.getenv('PROJECT_NAME', 'FastAPI')
-        self.project_version = os.getenv('PROJECT_VERSION', '0.0.1')
+        self.project_version = '0.0.1'
         self.debug = True if 'True' == os.getenv('DEBUG', False) else False
+        self.backend_cors_origins: List[str] = [
+        "http://localhost:3000",
+        "http://localhost:8000",
+    ]
 
 
 project_config = ProjectConfig()
