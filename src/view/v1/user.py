@@ -17,10 +17,10 @@ from repository.user import UserData
 from model.user import User
 from model.refresh_token import RefreshToken
 from settings.database import get_session
+from repository.auth import get_current_user
 from service.security import (
     create_access_token,
     create_refresh_token,
-    decode_access_token,
     decode_refresh_token,)
 
 
@@ -96,7 +96,7 @@ async def change_password_user(user: UserChangePasswordSchema, session=Depends(g
 
 
 @router.put('/change_active/', response_model=UserGetSchema)
-async def change_active_user(user: UserChangeActionSchema, session=Depends(get_session)):
+async def change_active_user(user: UserChangeActionSchema, current_user: User = Depends(get_current_user), session=Depends(get_session)):
     try:
         user_data = UserData(User, session)
         model = await user_data.change_state(id=user.id, is_active=user.is_active)

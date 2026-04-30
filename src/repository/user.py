@@ -56,6 +56,7 @@ class UserData(BaseData):
         user.is_active = is_active
         self.session.add(user)
         await self.session.commit()
+        await self.session.refresh(user)
         return user
 
     async def authenticate(self, username: str, password: str) -> User:

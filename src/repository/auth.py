@@ -5,18 +5,15 @@ from sqlalchemy import select
 
 from model.user import User
 from service.security import (
-    create_access_token,
-    create_refresh_token,
-    hash_password,
-    verify_password,
     decode_access_token,)
+from settings.database import get_session
 
 security = HTTPBearer()
 
 
 async def get_current_user(
                     request: Request,
-                    session: AsyncSession,
+                    session: AsyncSession = Depends(get_session),
                     credential: HTTPAuthorizationCredentials = Depends(security),):
     token = credential.credentials
     payload = decode_access_token(token)
@@ -24,7 +21,7 @@ async def get_current_user(
         raise HTTPException(status_code=401, detail="Invalid token")
     if payload.get("type") != "access":
         raise HTTPException(status_code=401, detail="Invalid token type")
-    user_id = payload.get("user_id", None)
+    user_id = payload.get("id", None)
     if not user_id:
         raise HTTPException(status_code=401, detail="Wrong payload")
 
