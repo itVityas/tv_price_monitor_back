@@ -43,15 +43,15 @@ async def get_users(
     - Сортировка по username: ?sort_field=username
     - Сортировка по дате создания: ?sort_field=created_at
     - Сортировка по дате обновления: ?sort_field=updated_at
-    - Обратная сортировка: ?sort_field=-id
+    - Обратная сортировка: ?sort_order=asc или desc
 
     Примеры фильтров:
-    - Фильтр по username: ?filters[username]=john
-    - Фильтр по части username: ?filters[username__icontains]=jo
-    - Фильтр по ID: ?filters[id]=1
-    - Фильтр по диапазону ID: ?filters[id__gt]=10&filters[id__lt]=50
-    - Фильтр по дате: ?filters[created_at__gte]=2024-01-01T00:00:00
-    - Несколько фильтров: ?filters[is_active]=true&filters[is_admin]=false
+    - Фильтр по username: ?username=john
+    - Фильтр по части username: ?username__icontains=jo
+    - Фильтр по ID: ?id=1
+    - Фильтр по диапазону ID: ?id__gt=10&filters[id__lt]=50
+    - Фильтр по дате: ?created_at__gte=2024-01-01T00:00:00
+    - Несколько фильтров: ?is_active=true&filters[is_admin]=false
     """
     try:
         user_model = UserData(User, session)

@@ -16,9 +16,9 @@ class ExchangeRate(BaseModelOnlyId):
 
     date: Mapped[datetype] = mapped_column(insert_default=func.current_date(), nullable=False, index=True)
     currency_id: Mapped[int] = mapped_column(ForeignKey('currency.id'), nullable=False)
-    currency = relationship("Currency")
+    currency = relationship("Currency", foreign_keys=currency_id)
     base_currency_id: Mapped[int] = mapped_column(ForeignKey('currency.id'), nullable=False)
-    base_currency = relationship("Currency")
+    base_currency = relationship("Currency", foreign_keys=base_currency_id)
     rate: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
 
     __table_args__ = (

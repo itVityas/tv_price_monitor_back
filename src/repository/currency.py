@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.model.currency import Currency
-from src.repository.base import BaseData
+from model.currency import Currency
+from repository.base import BaseData
 
 
 class CurrencyData(BaseData):
