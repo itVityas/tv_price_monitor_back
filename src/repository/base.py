@@ -27,8 +27,14 @@ class BaseData:
         result = await self.session.execute(stmt)
         return result.scalars().first()
 
+    async def delete(self, id: int) -> bool:
+        db_obj = await self.get_one(id)
+        await self.session.delete(db_obj)
+        await self.session.commit()
+        return True
+
     async def update(self, id: int, obj_in: Type[ModelType]) -> ModelType:
-        db_obj = await self.get(id)
+        db_obj = await self.get_one(id)
         for field, value in obj_in.model_dump(exclude_unset=True).items():
             setattr(db_obj, field, value)
         self.session.add(db_obj)

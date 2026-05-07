@@ -52,3 +52,32 @@ async def currency_list(
         )
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.post('/', response_model=CurrencyFullSchema, status_code=status.HTTP_201_CREATED)
+async def currency_create(currency: CurrencySmallSchema, session=Depends(get_session)):
+    try:
+        currency_data = CurrencyData(Currency, session)
+        new_currency = await currency_data.create(currency)
+        return CurrencyFullSchema.model_validate(new_currency)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.put('/update/{id}/', response_model=CurrencyFullSchema)
+async def currency_change(id: int, currensy: CurrencySmallSchema, session=Depends(get_session)):
+    try:
+        currency_data = CurrencyData(Currency, session)
+        model = await currency_data.update(id, currensy)
+        return CurrencyFullSchema.model_validate(model)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.delete('/delete/{id}/', status_code=status.HTTP_204_NO_CONTENT)
+async def currency_delete(id: int, session=Depends(get_session)):
+    try:
+        currency_data = CurrencyData(Currency, session)
+        await currency_data.delete(id)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
