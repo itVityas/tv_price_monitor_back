@@ -45,6 +45,9 @@ class PaginationSortParamsSchema(BaseModel):
             raise ValueError("sort_order must be 'asc' or 'desc'")
         return v.lower()
 
+    def get_count_pages(self, total):
+        return total // self.page_size + (1 if total % self.page_size else 0)
+
 
 class PaginationResponseSchema(BaseModel, Generic[T]):
     items: List[T]

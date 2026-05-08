@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.model.exchange_rate import ExchangeRate
-from src.repository.base import BaseData
+from model.exchange_rate import ExchangeRate
+from repository.base import BaseData
 
 
 class ExchangeRateData(BaseData):
