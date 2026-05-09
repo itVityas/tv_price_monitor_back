@@ -47,7 +47,7 @@ class ExchangeRatePatchSchema(BaseModel):
 class ExchangeRateParamsSchema(PaginationSortParamsSchema):
     id: Optional[int] = None
     date: Optional[datetype] = None
-    date_gte: Optional[datetype] = None
-    date_lte: Optional[datetype] = None
+    date__gte: Optional[datetype] = None
+    date__lte: Optional[datetype] = None
     currency_id: Optional[int] = None
     base_currency_id: Optional[int] = None

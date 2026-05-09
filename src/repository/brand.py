@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.model.brand import Brand
-from src.repository.base import BaseData
+from model.brand import Brand
+from repository.base import BaseData
 
 
 class BrandData(BaseData):
