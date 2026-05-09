@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.model.category import Category
+from model.category import Category
 from .base import BaseData
 
 
