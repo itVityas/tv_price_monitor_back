@@ -18,6 +18,7 @@ class ExchangeRateSmallSchema(BaseModel):
 
 
 class ExchangeRateFullSchema(BaseModel):
+    id: int
     date: datetype
     currency: CurrencyFullSchema
     base_currency: CurrencyFullSchema
@@ -25,6 +26,22 @@ class ExchangeRateFullSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ExchangeRateSimpleSchema(BaseModel):
+    id: int
+    date: datetype
+    currency_id: int
+    base_currency_id: int
+    rate: float
+
+    class Config:
+        from_attributes = True
+
+
+class ExchangeRatePatchSchema(BaseModel):
+    date: Optional[datetype] = None
+    rate: Optional[float] = None
 
 
 class ExchangeRateParamsSchema(PaginationSortParamsSchema):

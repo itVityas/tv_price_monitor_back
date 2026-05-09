@@ -1,7 +1,12 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 
 from model.exchange_rate import ExchangeRate
-from schema.exchange_rate import ExchangeRateFullSchema, ExchangeRateParamsSchema, ExchangeRateSmallSchema
+from schema.exchange_rate import (
+    ExchangeRateFullSchema,
+    ExchangeRateParamsSchema,
+    ExchangeRateSmallSchema,
+    ExchangeRateSimpleSchema,
+    ExchangeRatePatchSchema,)
 from schema.pagination import PaginationResponseSchema
 from repository.exchange_rate import ExchangeRateData
 from settings.database import get_session
@@ -28,9 +33,9 @@ async def exchange_rate_list(
 
     Параметры фильтров:
     - Фильтр по id: ?id=1
-    - Фильтр по точной дате: ?date=
-    - Фильтр для даты больше: date_gte=
-    - Фильтр для даты меньше: date_lte=
+    - Фильтр по точной дате: ?date=2026-05-09
+    - Фильтр для даты больше: date_gte=2026-05-09
+    - Фильтр для даты меньше: date_lte=2026-05-09
     - Фильтр для id валюты: currency_id=2
     - Фильтр для id валюты к которой обмениваем: base_currency_id=3
     """
@@ -42,6 +47,7 @@ async def exchange_rate_list(
             sort_field=pagination.sort_field,
             sort_order=pagination.sort_order,
             filters=pagination.filters,
+            eager_loads=['currency', 'base_currency']
         )
         exchange_rate_schemes = [ExchangeRateFullSchema.model_validate(item) for item in exchage_rate_list]
         pages = pagination.get_count_pages(total)
@@ -52,5 +58,31 @@ async def exchange_rate_list(
             size=pagination.page_size,
             pages=pages
         )
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@router.post('/', response_model=ExchangeRateSimpleSchema)
+async def exchange_rate_create(exchange_rate: ExchangeRateSmallSchema, session=Depends(get_session)):
+    try:
+        exchange_rate_data = ExchangeRateData(ExchangeRate, session)
+        new_exchange_rate = await exchange_rate_data.create(exchange_rate)
+        return ExchangeRateSimpleSchema.model_validate(new_exchange_rate)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@router.delete('/delete/{id}/', status_code=status.HTTP_204_NO_CONTENT)
+async def exchange_rate_delete(id: int, session=Depends(get_session)):
+    try:
+        exchange_rate_data = ExchangeRateData(ExchangeRate, session)
+        await exchange_rate_data.delete(id)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@router.patch('/patch/{id}/', response_model=ExchangeRateSimpleSchema)
+async def exchange_rate_patch(id: int, exchange_rate: ExchangeRatePatchSchema, session=Depends(get_session)):
+    try:
+        exchange_rate_data = ExchangeRateData(ExchangeRate, session)
+        model = await exchange_rate_data.update(id, exchange_rate)
+        return ExchangeRateSimpleSchema.model_validate(model)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
