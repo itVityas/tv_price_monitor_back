@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.model.matrix_type import MatrixType
-from src.repository.base import BaseData
+from model.matrix_type import MatrixType
+from repository.base import BaseData
 
 
 class MatrixTypeData(BaseData):
