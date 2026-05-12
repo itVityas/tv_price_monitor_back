@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.model.shop import Shop
-from src.repository.base import BaseData
+from model.shop import Shop
+from repository.base import BaseData
 
 
 class ShopData(BaseData):
