@@ -100,7 +100,7 @@ class BaseData:
         """
         query = select(self.model)
         query = self._apply_filters(query, filters)
-        
+
         if eager_loads:
             for relation in eager_loads:
                 if hasattr(self.model, relation):

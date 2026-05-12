@@ -17,8 +17,8 @@ router = APIRouter(prefix='/exchange_rate', tags=['ExchangeRate'])
 
 @router.get('/', response_model=PaginationResponseSchema[ExchangeRateFullSchema])
 async def exchange_rate_list(
-                                pagination = Depends(ExchangeRateParamsSchema),
-                                session = Depends(get_session),
+                                pagination=Depends(ExchangeRateParamsSchema),
+                                session=Depends(get_session),
                             ):
     """Получить список обмена валют с пагинацией и сортировкой
 
@@ -61,6 +61,7 @@ async def exchange_rate_list(
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
+
 @router.post('/', response_model=ExchangeRateSimpleSchema)
 async def exchange_rate_create(exchange_rate: ExchangeRateSmallSchema, session=Depends(get_session)):
     try:
@@ -70,6 +71,7 @@ async def exchange_rate_create(exchange_rate: ExchangeRateSmallSchema, session=D
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
+
 @router.delete('/delete/{id}/', status_code=status.HTTP_204_NO_CONTENT)
 async def exchange_rate_delete(id: int, session=Depends(get_session)):
     try:
@@ -77,6 +79,7 @@ async def exchange_rate_delete(id: int, session=Depends(get_session)):
         await exchange_rate_data.delete(id)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
 
 @router.patch('/patch/{id}/', response_model=ExchangeRateSimpleSchema)
 async def exchange_rate_patch(id: int, exchange_rate: ExchangeRatePatchSchema, session=Depends(get_session)):

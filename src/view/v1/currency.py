@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
-from sqlalchemy import select, delete
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from schema.currency import (CurrencyFullSchema, CurrencySmallSchema, CurrencyPaginationParamsSchema)
 from repository.currency import CurrencyData

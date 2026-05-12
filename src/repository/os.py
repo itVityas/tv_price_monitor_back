@@ -1,8 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.model.os import OS
-from src.repository.base import BaseData
+from model.os import OS
+from repository.base import BaseData
+
 
 class OSData(BaseData):
     def __init__(self, model: OS, session: AsyncSession):
-        super().init(model=model, session=session)
+        super().__init__(model=model, session=session)

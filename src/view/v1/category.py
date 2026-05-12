@@ -56,6 +56,7 @@ async def category_list(pagination: CategoryParamsSchema = Depends(), session=De
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
+
 @router.post('/', response_model=CategoryFullSchema)
 async def category_create(category: CategorySmallSchema, session=Depends(get_session)):
     try:
@@ -65,6 +66,7 @@ async def category_create(category: CategorySmallSchema, session=Depends(get_ses
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
+
 @router.patch('/patch/{id}/', response_model=CategoryFullSchema)
 async def category_update(id: int, category: CategoryUpdateSchema, session=Depends(get_session)):
     try:
@@ -73,6 +75,7 @@ async def category_update(id: int, category: CategoryUpdateSchema, session=Depen
         return CategoryFullSchema.model_validate(model)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
 
 @router.delete('/delete/{id}/', status_code=status.HTTP_204_NO_CONTENT)
 async def category_delete(id: int, session=Depends(get_session)):

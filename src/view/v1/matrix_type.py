@@ -13,6 +13,7 @@ from schema.matrix_type import (
 
 router = APIRouter(prefix='/matrix_type', tags=['MatrixType'])
 
+
 @router.get('/', response_model=PaginationResponseSchema[MatrixTypeFullSchema])
 async def matrix_type_list(pagination: MatrixTypeParamsSchema = Depends(), session=Depends(get_session)):
     """Получить список типов матриц с пагинацией, сортировкой и фильтрацией
@@ -57,6 +58,7 @@ async def matrix_type_list(pagination: MatrixTypeParamsSchema = Depends(), sessi
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
+
 @router.post('/', response_model=MatrixTypeSmallSchema)
 async def matrix_type_create(matrix_type: MatrixTypeSmallSchema, session=Depends(get_session)):
     try:
@@ -66,6 +68,7 @@ async def matrix_type_create(matrix_type: MatrixTypeSmallSchema, session=Depends
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
+
 @router.patch('/patch/{id}/', response_model=MatrixTypeSmallSchema)
 async def matrix_type_update(id: int, matrix_type: MatrixTypeUpdateSchema, session=Depends(get_session)):
     try:
@@ -74,6 +77,7 @@ async def matrix_type_update(id: int, matrix_type: MatrixTypeUpdateSchema, sessi
         return MatrixTypeSmallSchema.model_validate(model)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
 
 @router.delete('/delete/{id}/', status_code=status.HTTP_204_NO_CONTENT)
 async def matrix_type_delete(id: int, session=Depends(get_session)):

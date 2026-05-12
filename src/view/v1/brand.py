@@ -13,6 +13,7 @@ from schema.brand import (
 
 router = APIRouter(prefix='/brand', tags=['Brand'])
 
+
 @router.get('/', response_model=PaginationResponseSchema[BrandFullSchema])
 async def brand_list(
                         pagination: BrandPaginationParamsSchema = Depends(),
@@ -63,6 +64,7 @@ async def brand_list(
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
+
 @router.post('/', response_model=BrandFullSchema)
 async def brand_create(brand: BrandSmallSchema, session=Depends(get_session)):
     try:
@@ -72,6 +74,7 @@ async def brand_create(brand: BrandSmallSchema, session=Depends(get_session)):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
+
 @router.patch('/patch/{id}/', response_model=BrandFullSchema)
 async def brand_update(id: int, brand: BrandUpdateSchema, session=Depends(get_session)):
     try:
@@ -80,6 +83,7 @@ async def brand_update(id: int, brand: BrandUpdateSchema, session=Depends(get_se
         return BrandFullSchema.model_validate(model)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
 
 @router.delete('/delete/{id}/', status_code=status.HTTP_204_NO_CONTENT)
 async def brand_delete(id: int, session=Depends(get_session)):
