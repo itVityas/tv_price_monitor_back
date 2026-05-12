@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.model.screen_resolution import ScreenResolution
-from src.repository.base import BaseData
+from model.screen_resolution import ScreenResolution
+from repository.base import BaseData
 
 
 class ScreenResolutionData(BaseData):
