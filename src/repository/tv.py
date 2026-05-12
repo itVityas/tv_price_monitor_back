@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.model.tv import TV
-from src.repository.base import BaseData
+from model.tv import TV
+from repository.base import BaseData
 
 
 class TVData(BaseData):
