@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, status, HTTPException
+from sqlalchemy.orm import selectinload
 
 from settings.database import get_session
 from model.shop_link import ShopLink
+from model.tv import TV
 from repository.shop_link import ShopLinkData
 from schema.pagination import PaginationResponseSchema
 from schema.shop_link import (
@@ -20,16 +22,23 @@ router = APIRouter(prefix='/shop_link', tags=['ShopLink'])
 async def shop_link_list(pagination: ShopLinkFilterSchema = Depends(), session=Depends(get_session)):
     try:
         shop_link_data = ShopLinkData(ShopLink, session)
+        eager_options = [
+            selectinload(ShopLink.shop),
+            selectinload(ShopLink.tv).options(
+                selectinload(TV.os),
+                selectinload(TV.screen_resolution),
+                selectinload(TV.brand),
+                selectinload(TV.matrix_type),
+                selectinload(TV.category),
+            )
+        ]
         shop_link_list, total = await shop_link_data.get_multi(
             skip=pagination.offset,
             limit=pagination.limit,
             sort_field=pagination.sort_field,
             sort_order=pagination.sort_order,
             filters=pagination.filters,
-            eager_loads=[
-                'shop',
-                'tv',
-            ]
+            eager_loads=eager_options
         )
         shop_link_schemes = [ShopLinkResponceFullSchema.model_validate(item) for item in shop_link_list]
         pages = pagination.get_count_pages(total)
