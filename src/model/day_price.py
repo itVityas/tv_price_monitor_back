@@ -17,4 +17,4 @@ class DayPrice(BaseModelOnlyId):
     price: Mapped[float] = mapped_column(nullable=False)
     discount_price: Mapped[float] = mapped_column(nullable=True)
     card_price: Mapped[float] = mapped_column(nullable=True)
-    created_at: Mapped[date] = mapped_column(insert_default=func.current_date, nullable=False)
+    created_at: Mapped[date] = mapped_column(insert_default=func.now(), nullable=False)

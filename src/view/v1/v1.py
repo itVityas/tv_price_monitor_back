@@ -11,6 +11,7 @@ from view.v1.shop import router as shop_router
 from view.v1.screen_resolution import router as screen_resolution_router
 from view.v1.tv import router as tv_router
 from view.v1.shop_link import router as shop_link_router
+from view.v1.day_price import router as day_price_router
 
 
 v1_router = APIRouter()
@@ -25,3 +26,4 @@ v1_router.include_router(shop_router)
 v1_router.include_router(screen_resolution_router)
 v1_router.include_router(tv_router)
 v1_router.include_router(shop_link_router)
+v1_router.include_router(day_price_router)

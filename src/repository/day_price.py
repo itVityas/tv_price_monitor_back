@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.model.day_price import DayPrice
-from src.repository.base import BaseData
+from model.day_price import DayPrice
+from repository.base import BaseData
 
 
 class DayPriceData(BaseData):
