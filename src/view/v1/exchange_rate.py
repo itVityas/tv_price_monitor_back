@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, status, HTTPException
+from sqlalchemy.orm import selectinload
 
 from model.exchange_rate import ExchangeRate
 from schema.exchange_rate import (
@@ -41,13 +42,14 @@ async def exchange_rate_list(
     """
     try:
         exchage_rate_model = ExchangeRateData(ExchangeRate, session)
+        eager_options = [selectinload(ExchangeRate.currency), selectinload(ExchangeRate.base_currency)]
         exchage_rate_list, total = await exchage_rate_model.get_multi(
             skip=pagination.offset,
             limit=pagination.limit,
             sort_field=pagination.sort_field,
             sort_order=pagination.sort_order,
             filters=pagination.filters,
-            eager_loads=['currency', 'base_currency']
+            eager_loads=eager_options
         )
         exchange_rate_schemes = [ExchangeRateFullSchema.model_validate(item) for item in exchage_rate_list]
         pages = pagination.get_count_pages(total)
