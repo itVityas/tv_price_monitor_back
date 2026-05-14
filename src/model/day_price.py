@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date as idate
 
 from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -17,4 +17,4 @@ class DayPrice(BaseModelOnlyId):
     price: Mapped[float] = mapped_column(nullable=False)
     discount_price: Mapped[float] = mapped_column(nullable=True)
     card_price: Mapped[float] = mapped_column(nullable=True)
-    created_at: Mapped[date] = mapped_column(insert_default=func.now(), nullable=False)
+    date: Mapped[idate] = mapped_column(insert_default=func.now(), nullable=False)

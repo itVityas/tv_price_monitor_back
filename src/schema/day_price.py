@@ -1,5 +1,5 @@
 from typing import Optional
-from datetime import date
+from datetime import date as idate
 
 from pydantic import BaseModel
 
@@ -14,6 +14,7 @@ class DayPriceUpdateSchema(BaseModel):
     price: Optional[float] = None
     discount_price: Optional[float] = None
     card_price: Optional[float] = None
+    date: Optional[idate] = None
 
     class Config:
         from_attributes = True
@@ -25,6 +26,7 @@ class DayPricePostSchema(BaseModel):
     price: float
     discount_price: Optional[float] = None
     card_price: Optional[float] = None
+    date: idate
 
     class Config:
         from_attributes = True
@@ -37,7 +39,7 @@ class DayPriceSmallResponseSchema(BaseModel):
     price: float
     discount_price: float
     card_price: float
-    created_at: date
+    date: idate
 
     class Config:
         from_attributes = True
@@ -50,7 +52,7 @@ class DayPriceFullResponseSchema(BaseModel):
     price: float
     discount_price: float
     card_price: float
-    created_at: date
+    date: idate
 
     class Config:
         from_attributes = True
@@ -63,6 +65,6 @@ class DayPriceFilterSchema(PaginationSortParamsSchema):
     price: Optional[float] = None
     discount_price: Optional[float] = None
     card_price: Optional[float] = None
-    created_at: Optional[str] = None
-    created_at__gte: Optional[str] = None
-    created_at__lte: Optional[str] = None
+    date: Optional[str] = None
+    date__gte: Optional[str] = None
+    date__lte: Optional[str] = None

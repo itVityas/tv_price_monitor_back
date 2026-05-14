@@ -41,9 +41,9 @@ async def day_price_list(
     - Фильтр по price: ?price=1.0
     - Фильтр по discount_price: ?discount_price=1.0
     - Фильтр по card_price: ?card_price=1.0
-    - Фильтр по created_at: ?created_at=2020-01-01
-    - Фильтр по created_at (больше): ?created_at__gte=2020-01-01
-    - Фильтр по created_at (меньше): ?created_at__lte=2020-01-01
+    - Фильтр по date: ?date=2020-01-01
+    - Фильтр по date (больше): ?date__gte=2020-01-01
+    - Фильтр по date (меньше): ?date__lte=2020-01-01
 """
     try:
         day_price_data = DayPriceData(DayPrice, session)
