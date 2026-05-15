@@ -19,15 +19,22 @@ if venv_path.exists():
 
 from alembic.config import Config
 from alembic import command
-from settings.database import get_session
+from settings.database import get_session, engine 
 from fixtures.load_fixtures import FixtureLoad
+
+
+def do_run_migrations(connection, alembic_cfg):
+    """Синхронная функция для выполнения миграций внутри контекста соединения"""
+    alembic_cfg.attributes['connection'] = connection
+    command.upgrade(alembic_cfg, "head")
 
 
 async def run_migrations():
     """Запуск миграций Alembic"""
     print("🔄 Running migrations...")
     alembic_cfg = Config("alembic.ini")
-    command.upgrade(alembic_cfg, "head")
+    async with engine.begin() as conn:
+        await conn.run_sync(do_run_migrations, alembic_cfg)
     print("✅ Migrations completed")
 
 
@@ -43,7 +50,7 @@ async def init_database():
     """Полная инициализация базы данных"""
     try:
         # 1. Запускаем миграции
-        # await run_migrations()
+        await run_migrations()
 
         # 2. Загружаем фикстуры
         await load_fixtures()
