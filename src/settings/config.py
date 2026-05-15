@@ -1,5 +1,5 @@
 import os
-from typing import List 
+from typing import List
 
 from dotenv import load_dotenv
 
@@ -36,6 +36,7 @@ class ServerConfig:
         self.host = os.getenv('HOST', '0.0.0.0')
         self.port = int(os.getenv('PORT', 8000))
         self.reload = os.getenv('RELOAD', True)
+        self.load_fixtures_on_startup = os.getenv('LOAD_FIXTURES_ON_STARTUP', False)
 
 
 server_config = ServerConfig()
@@ -53,9 +54,9 @@ class ProjectConfig:
         self.project_version = '0.0.1'
         self.debug = True if 'True' == os.getenv('DEBUG', False) else False
         self.backend_cors_origins: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:8000",
-    ]
+            "http://localhost:3000",
+            "http://localhost:8000",
+        ]
 
 
 project_config = ProjectConfig()
