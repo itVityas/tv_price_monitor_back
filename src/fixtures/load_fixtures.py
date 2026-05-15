@@ -9,6 +9,7 @@ from model.user import User
 from model.currency import Currency
 from model.category import Category
 from model.matrix_type import MatrixType
+from model.os import OS
 
 
 class FixtureLoad:
@@ -97,6 +98,25 @@ class FixtureLoad:
                 self.session.add(new_matrix_type)
                 await self.session.commit()
 
+    async def load_os(self, fixture_file: Path):
+        if not fixture_file.exists():
+            raise FileNotFoundError(f"Fixture file {fixture_file} not found")
+        with open(fixture_file, 'r') as file:
+            fixture_data = json.load(file)
+
+        for line in fixture_data:
+            name = line.get('name')
+
+            result = await self.session.execute(select(OS).where(OS.name == name))
+            existing_os = result.scalar_one_or_none()
+
+            if not existing_os:
+                new_os = OS(
+                    name=name
+                )
+                self.session.add(new_os)
+                await self.session.commit()
+
     async def load_all_fixtures(self, fixtures_dir: Path):
         fixtures_files = fixtures_dir.glob('*.json')
         for fixture_file in fixtures_files:
@@ -108,3 +128,5 @@ class FixtureLoad:
                 await self.load_categories(fixture_file)
             if 'matrix_type' in fixture_file.name:
                 await self.load_matrix_types(fixture_file)
+            if 'os' in fixture_file.name:
+                await self.load_os(fixture_file)
