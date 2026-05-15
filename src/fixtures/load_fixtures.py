@@ -10,6 +10,7 @@ from model.currency import Currency
 from model.category import Category
 from model.matrix_type import MatrixType
 from model.os import OS
+from model.screen_resolution import ScreenResolution
 
 
 class FixtureLoad:
@@ -117,6 +118,29 @@ class FixtureLoad:
                 self.session.add(new_os)
                 await self.session.commit()
 
+    async def load_screen_resolutions(self, fixture_file: Path):
+        if not fixture_file.exists():
+            raise FileNotFoundError(f"Fixture file {fixture_file} not found")
+        with open(fixture_file, 'r') as file:
+            fixture_data = json.load(file)
+
+        for line in fixture_data:
+            name = line.get('name')
+            width = line.get('width')
+            height = line.get('height')
+
+            result = await self.session.execute(select(ScreenResolution).where(ScreenResolution.name == name))
+            existing_screen_resolution = result.scalar_one_or_none()
+
+            if not existing_screen_resolution:
+                new_screen_resolution = ScreenResolution(
+                    name=name,
+                    width=width,
+                    height=height
+                )
+                self.session.add(new_screen_resolution)
+                await self.session.commit()
+
     async def load_all_fixtures(self, fixtures_dir: Path):
         fixtures_files = fixtures_dir.glob('*.json')
         for fixture_file in fixtures_files:
@@ -130,3 +154,5 @@ class FixtureLoad:
                 await self.load_matrix_types(fixture_file)
             if 'os' in fixture_file.name:
                 await self.load_os(fixture_file)
+            if 'screen_resolution' in fixture_file.name:
+                await self.load_screen_resolutions(fixture_file)
