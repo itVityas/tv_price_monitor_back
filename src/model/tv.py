@@ -24,6 +24,7 @@ class TV(BaseModelOnlyId):
     color: Mapped[str] = mapped_column(String(20), nullable=True)
     description: Mapped[str] = mapped_column(Text, nullable=True)
     refresh_rate: Mapped[int] = mapped_column(nullable=True)
+    diagonal: Mapped[int] = mapped_column(nullable=True)
     tv_shop_link = relationship("ShopLink", back_populates='tv', cascade='all, delete-orphan')
 
     def __str__(self):

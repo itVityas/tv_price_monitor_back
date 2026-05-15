@@ -20,6 +20,7 @@ class TVUpdateSchema(BaseModel):
     color: Optional[str] = None
     description: Optional[str] = None
     refresh_rate: Optional[int] = None
+    diagonal: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -35,6 +36,7 @@ class TVPOSTSchema(BaseModel):
     color: Optional[str] = None
     description: Optional[str] = None
     refresh_rate: Optional[int] = None
+    diagonal: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -51,6 +53,7 @@ class TVSmallResponseSchema(BaseModel):
     color: Optional[str] = None
     description: Optional[str] = None
     refresh_rate: Optional[int] = None
+    diagonal: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -70,6 +73,7 @@ class TVFilterSchema(PaginationSortParamsSchema):
     category_id: Optional[int] = None
     color: Optional[str] = None
     refresh_rate: Optional[int] = None
+    diagonal: Optional[int] = None
 
 
 class TVFullResponceSchema(BaseModel):
@@ -83,6 +87,7 @@ class TVFullResponceSchema(BaseModel):
     color: Optional[str] = None
     description: Optional[str] = None
     refresh_rate: Optional[int] = None
+    diagonal: Optional[int] = None
 
     class Config:
         from_attributes = True

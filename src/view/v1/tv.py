@@ -43,6 +43,7 @@ async def tv_list(pagination: TVFilterSchema = Depends(), session=Depends(get_se
     - Фильтр по id категории: ?category_id=1
     - Фильтр по цвету: ?color=black
     - Фильтр по частоте обновления: ?refresh_rate=60
+    - Фильтр по диагонали: ?diagonal=32
     """
     try:
         tv_data = TVData(TV, session)
